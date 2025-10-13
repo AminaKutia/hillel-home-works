@@ -1,40 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=<device-width>, initial-scale=1.0" />
-    <title>Main page</title>
-    <link rel="stylesheet" type="text/css" href="./css/styles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CSS: специфічність селекторів</title>
+    <link rel="stylesheet" type="text/css" href="./styles.css" />
   </head>
   <body>
-    <header>
-      <nav>
-        <ul>
-          <li class="navigation"><a href="./index.html">Main</a></li>
-          <li class="navigation"><a href="./pages/about.html">About us</a></li>
-          <li class="navigation">
-            <a href="./pages/articles.html">Our articles</a>
-          </li>
-          <li class="navigation"><a href="./pages/gallery.html">Gallery</a></li>
-          <li class="navigation"><a href="./pages/form.html">Form</a></li>
-          <li class="navigation">
-            <a href="./pages/contacts.html">Contacts</a>
-          </li>
-        </ul>
-      </nav>
-    </header>
-    <main>
-      <h1>Main page</h1>
-      <div class="main-text">
-        <p>
-          Welcome to our website! Here you’ll find the latest information about
-          our services, projects, and updates. We are dedicated to delivering
-          high-quality solutions and sharing our expertise with visitors.
-          Explore the sections of our site to learn more about who we are and
-          what we do.
-        </p>
-      </div>
-    </main>
-    <footer></footer>
+    <!-- 1 -->
+    <h1>Селектор за тегом h1, вага 1</h1>
+
+    <!-- 2 -->
+    <p class="paragraf">Селектор за класом paragraf, вага 10</p>
+
+    <!-- 3 -->
+    <strong id="strong">Селектор за id strong, вага 100</strong>
+
+    <!-- 4 -->
+    <input type="button" value="Селектор за атрибутом, вага 10" />
+
+    <!-- 5 -->
+    <div class="parent">
+      <p>Вкладений селектор, вага 11</p>
+    </div>
+
+    <!-- 6 -->
+    <ul class="menu">
+      <li>Перший пункт: дочірній селектор, вага 11</li>
+      <li>Другий пункт: дочірній селектор, вага 11</li>
+      <li>Третій пункт: дочірній селектор, вага 11</li>
+    </ul>
+
+    <!-- 7 -->
+    <div>
+      <p>
+        Послідоівність селекторів: p перед strong, не переймає колір hotpink
+      </p>
+      <strong></strong>
+      <p>
+        Послідоівність селекторів: Перша p після strong, переймає колір hotpink,
+        вага 2
+      </p>
+    </div>
+    <div>
+      <h3>Приклад</h3>
+      <p>
+        Послідоівність селекторів: Перша p після h3, переймає колір aquamarine,
+        вага 2
+      </p>
+      <p>
+        Послідоівність селекторів: Друга p після h3, переймає колір aquamarine,
+        вага 2
+      </p>
+    </div>
+
+    <!-- 8 -->
+    <div id="combo">
+      <p class="combo-item" data-kind="colorful">
+        Комбінація тег + клас + атрибут + ID, вага 121
+      </p>
+    </div>
+
+    <!-- 9 -->
+    <div class="outer">
+      <div class="inner">Вкладений + клас, вага 20</div>
+    </div>
+
+    <!-- 10 -->
+    <p class="group1">Групування: клас group1, вага 10</p>
+    <span class="group2">Групування: клас group2, вага 10</span>
   </body>
 </html>
