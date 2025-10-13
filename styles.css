@@ -1,0 +1,134 @@
+body {
+  background-color: lightcyan;
+}
+
+ul {
+  list-style: none;
+}
+
+h1 {
+  color: blue;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+h2 {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+a img {
+  width: 620px;
+  height: 500px;
+  border-radius: 10px;
+}
+
+.navigation {
+  display: inline-block;
+  margin: 5px;
+  background-color: aquamarine;
+  line-height: 35px;
+}
+
+.local-navigation {
+  display: inline;
+  background-color: aqua;
+  margin: 3px;
+}
+
+.main-text {
+  background-color: beige;
+  height: 150px;
+  width: 1000px;
+  border-radius: 100px 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.list-two {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+
+.list-li {
+  background: aquamarine;
+  text-align: center;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.contacts {
+  font-family: Georgia, "Times New Roman", Times, serif;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.emails {
+  font-style: italic;
+  color: blue;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.adress {
+  font-style: oblique;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.form-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  font-weight: 600;
+}
+
+input,
+textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+button {
+  padding: 10px 15px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+}
