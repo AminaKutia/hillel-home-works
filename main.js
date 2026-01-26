@@ -1,61 +1,63 @@
-/*
- Створіть функцію sumBigIntegers, яка приймає два рядки (numStr1 та numStr2), що представляють великі числа.
- Функція повинна перетворити ці рядки на BigInt і повернути їх суму.
+ // You need to calculate amount of tip to give in a restaurant/cafe.
 
- console.log(sumBigIntegers('9007199254740991', '9007199254740991')); // виводить 18014398509481982n
-*/
+// 	Workflow:
 
-function sumBigIntegers(numStr1, numStr2) {
-  const a = BigInt(numStr1);
-  const b = BigInt(numStr2);
-  return a + b;
+// 1.	User inputs check summ. (Use “prompt” function).
+
+// 2.	User inputs tip percentage. (Use “prompt” function)
+
+// 3. For cancelled input show “Canceled.”
+
+// 4.	You need to validate the input data: both values should be numbers,  check summ can’t be
+
+// a negative number, percentage can’t be negative and bigger than 100.
+
+// 5.	If input data isn’t valid, you should show message “Invalid input data”. (Use “alert” function).
+
+// 6.	You need to calculate tip amount and total sum to pay.
+
+// 7.	Show message: (example). Use ”alert” function
+
+// Check summ: 200
+
+// Tip: 15%
+
+// Tip amount: 30
+
+// Total sum to pay:  230
+
+// TIP CALCULATOR
+
+const checkSumInput = prompt('Enter check sum:');
+if (checkSumInput === null) {
+  alert('Canceled.');
+} else {
+  const tipPercentInput = prompt('Enter tip percentage:');
+  if (tipPercentInput === null) {
+    alert('Canceled.');
+  } else {
+    const checkSum = Number(checkSumInput);
+    const tipPercent = Number(tipPercentInput);
+
+    const isValid =
+      !isNaN(checkSum) &&
+      !isNaN(tipPercent) &&
+      checkSum >= 0 &&
+      tipPercent >= 0 &&
+      tipPercent <= 100;
+
+    if (!isValid) {
+      alert('Invalid input data');
+    } else {
+      const tipAmount = (checkSum * tipPercent) / 100;
+      const totalSum = checkSum + tipAmount;
+
+      alert(
+        `Check sum: ${checkSum}
+Tip: ${tipPercent}%
+Tip amount: ${tipAmount}
+Total sum to pay: ${totalSum}`
+      );
+    }
+  }
 }
-
-console.log(sumBigIntegers('9007199254740991', '9007199254740991')); 
-
-/*
- Ваше завдання - створити функцію greet в JavaScript. Ця функція повинна приймати два аргументи:
-
- msg: Рядок, який представляє привітання, наприклад “Hi”, “Hey” або “Hello”.
- name: Рядок, який представляє ім’я особи, наприклад “John”, “Bob” або “Mary”.
-
- Функція greet повинна повертати новий рядок, який поєднує msg та name з комою та пробілом між ними. Наприклад, якщо msg це “Hi” і name це “John”, то функція повинна повернути рядок “Hi, John”.
-
- Ось приклад використання цієї функції:
-
- console.log(greet('Hi', 'John')) // Hi, John
- console.log(greet('Hey', 'Bob')) // Hey, Bob
- console.log(greet('Hello', 'Mary')) // Hello, Mary
-*/
-
-function greet(msg, name) {
-  return `${msg}, ${name}`;
-}
- console.log(greet('Hi', 'John')) // Hi, John
- console.log(greet('Hey', 'Bob')) // Hey, Bob
- console.log(greet('Hello', 'Mary')) // Hello, Mary
-
-
- /*
- Створіть функцію `getRandomInt`, яка приймає два цілих числа: `min` та `max`. Ця функція повинна генерувати випадкове ціле число в діапазоні від `min` до `max` (включно).
-
- Використовуйте `Math.random()` для генерації випадкового числа від 0 до 1, а потім масштабуйте та зсувайте це число, щоб воно відповідало вашому діапазону. Використовуйте `Math.floor()` для округлення результату вниз до найближчого цілого числа.
-
- Після створення функції, використайте її для генерації випадкових чисел в різних діапазонах. Наприклад, виведіть випадкове число від 1 до 10, від 40 до 50, та від 1 до 100. Кожне викликане число повинно бути виведено в консоль.
-
- Ось приклад використання цієї функції:
-
- console.log(getRandomInt(1, 10)); // виводить випадкове число від 1 до 10
- console.log(getRandomInt(40, 50)); // виводить випадкове число від 40 до 50
- console.log(getRandomInt(1, 100)); // виводить випадкове число від 1 до 100
-
- Зверніть увагу, що кожен виклик `getRandomInt` може повертати різні числа, оскільки вони випадкові. Завдання полягає в написанні цієї функції та її використанні для генерації випадкових чисел.
-*/
-
-function getRandomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
- console.log(getRandomInt(1, 10)); // виводить випадкове число від 1 до 10
- console.log(getRandomInt(40, 50)); // виводить випадкове число від 40 до 50
- console.log(getRandomInt(1, 100)); // виводить випадкове число від 1 до 100
