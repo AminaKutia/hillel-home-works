@@ -1,4 +1,5 @@
 const books = [
+
   {
 
     id: 1,
@@ -9,7 +10,9 @@ const books = [
 
     year: 2021,
 
-    description: "Книга знайомить з основами JavaScript та пояснює ключові поняття простою мовою."
+    description:
+
+      "Книга знайомить з основами JavaScript та пояснює ключові поняття простою мовою."
 
   },
 
@@ -23,7 +26,9 @@ const books = [
 
     year: 2020,
 
-    description: "Посібник з сучасних можливостей JavaScript та прикладів їх використання."
+    description:
+
+      "Посібник з сучасних можливостей JavaScript та прикладів їх використання."
 
   },
 
@@ -37,29 +42,35 @@ const books = [
 
     year: 2019,
 
-    description: "Книга про створення веб-застосунків з використанням HTML, CSS та JavaScript."
+    description:
+
+      "Книга про створення веб-застосунків з використанням HTML, CSS та JavaScript."
 
   }
 
 ];
+
  
 
-/* Завдання */
-/* Отримайте доступ до елемента з id="root" за допомогою JavaScript. */
+let nextId = books.length + 1;
+
+ 
 
 const root = document.getElementById("root");
 
-/* Динамічно створіть заголовок сторінки (наприклад, «Список книг») і додайте його в root. */
+ 
+
+// Заголовок
 
 const title = document.createElement("h1");
+
 title.textContent = "Список книг";
+
 root.appendChild(title);
 
-/* Реалізуйте макет сторінки, поділений на дві частини:
+ 
 
-ліва частина — список книг;
-
-права частина — блок для відображення детальної інформації. */
+// Контейнер сторінки
 
 const layout = document.createElement("div");
 
@@ -69,33 +80,19 @@ layout.style.gap = "40px";
 
 root.appendChild(layout);
 
-/* У лівій частині сторінки:
+ 
 
-згенеруйте список книг на основі масиву books;
-
-для кожної книги відобразіть її назву;
-
-поруч з назвою кожної книги додайте кнопку «View Details». */
+// Ліва частина — список книг
 
 const listSection = document.createElement("div");
 
 listSection.style.width = "40%";
 
-/* При натисканні на кнопку «View Details»:
+layout.appendChild(listSection);
 
-у правій частині сторінки має відображатися детальна інформація про відповідну книгу;
+ 
 
-детальна інформація повинна містити:
-
-назву книги;
-
-автора;
-
-рік видання;
-
-опис.
-
-При натисканні на іншу кнопку «View Details» інформація в правій частині повинна оновлюватися відповідно до обраної книги.*/
+// Права частина — деталі / форма
 
 const detailsSection = document.createElement("div");
 
@@ -105,30 +102,41 @@ detailsSection.style.border = "1px solid #ccc";
 
 detailsSection.style.padding = "15px";
 
-layout.appendChild(listSection);
-
 layout.appendChild(detailsSection);
 
-// функція показу деталей
+ 
+
+// Показ деталей книги
 
 function showDetails(book) {
+
   detailsSection.innerHTML = "";
+
+ 
 
   const bookTitle = document.createElement("h2");
 
   bookTitle.textContent = book.title;
 
+ 
+
   const author = document.createElement("p");
 
   author.textContent = "Author: " + book.author;
+
+ 
 
   const year = document.createElement("p");
 
   year.textContent = "Year: " + book.year;
 
+ 
+
   const description = document.createElement("p");
 
   description.textContent = book.description;
+
+ 
 
   detailsSection.appendChild(bookTitle);
 
@@ -140,34 +148,194 @@ function showDetails(book) {
 
 }
 
+ 
+
 // список книг
 
-books.forEach(book => {
+function renderBookList() {
 
-  const item = document.createElement("div");
+  listSection.innerHTML = "";
 
-  item.style.marginBottom = "10px";
+ 
 
-  const bookName = document.createElement("span");
+  books.forEach(book => {
 
-  bookName.textContent = book.title;
+    const item = document.createElement("div");
 
-  const button = document.createElement("button");
+    item.style.marginBottom = "10px";
 
-  button.textContent = "View Details";
+ 
 
-  button.style.marginLeft = "10px";
+    const bookName = document.createElement("span");
 
-  button.addEventListener("click", () => {
+    bookName.textContent = book.title;
 
-    showDetails(book);
+ 
+
+    const button = document.createElement("button");
+
+    button.textContent = "View Details";
+
+    button.style.marginLeft = "10px";
+
+ 
+
+    button.addEventListener("click", () => showDetails(book));
+
+ 
+
+    item.appendChild(bookName);
+
+    item.appendChild(button);
+
+ 
+
+    listSection.appendChild(item);
 
   });
 
-  item.appendChild(bookName);
+ 
 
-  item.appendChild(button);
+  //"Add Book"
 
-  listSection.appendChild(item);
+  const addButton = document.createElement("button");
 
-});
+  addButton.textContent = "Add Book";
+
+  addButton.style.marginTop = "20px";
+
+ 
+
+  addButton.addEventListener("click", showAddBookForm);
+
+ 
+
+  listSection.appendChild(addButton);
+
+}
+
+ 
+
+// Форма додавання книги
+
+function showAddBookForm() {
+
+  detailsSection.innerHTML = "";
+
+ 
+
+  const form = document.createElement("form");
+
+ 
+
+  const fields = [
+
+    { label: "Title", name: "title" },
+
+    { label: "Author", name: "author" },
+
+    { label: "Year", name: "year" },
+
+    { label: "Description", name: "description" }
+
+  ];
+
+ 
+
+  fields.forEach(f => {
+
+    const fieldLabel = document.createElement("label");
+
+    fieldLabel.textContent = f.label + ": ";
+
+    fieldLabel.style.display = "block";
+
+ 
+
+    let input;
+
+    if (f.name === "description") {
+
+      input = document.createElement("textarea");
+
+      input.rows = 3;
+
+    } else {
+
+      input = document.createElement("input");
+
+      if (f.name === "year") input.type = "number";
+
+    }
+
+    input.name = f.name;
+
+    input.required = true;
+
+    input.style.width = "100%";
+
+    input.style.marginBottom = "10px";
+
+ 
+
+    fieldLabel.appendChild(input);
+
+    form.appendChild(fieldLabel);
+
+  });
+
+ 
+
+  const submit = document.createElement("button");
+
+  submit.textContent = "Submit";
+
+  submit.type = "submit";
+
+  form.appendChild(submit);
+
+ 
+
+  form.addEventListener("submit", e => {
+
+    e.preventDefault();
+
+ 
+
+    const formData = new FormData(form);
+
+    const newBook = {
+
+      id: nextId++,
+
+      title: formData.get("title"),
+
+      author: formData.get("author"),
+
+      year: Number(formData.get("year")),
+
+      description: formData.get("description")
+
+    };
+
+ 
+
+    books.push(newBook);
+
+    renderBookList();
+
+ 
+
+    detailsSection.innerHTML = `<p>Book "${newBook.title}" added successfully!</p>`;
+
+  });
+
+ 
+
+  detailsSection.appendChild(form);
+
+}
+
+ 
+
+renderBookList();
