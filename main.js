@@ -1,292 +1,173 @@
-/* Частина 1 — Клас Product
+const books = [
+  {
 
-Створіть клас Product, який має:
+    id: 1,
 
-Публічні властивості:
+    title: "JavaScript для початківців",
 
-name
+    author: "Іван Петренко",
 
-price
+    year: 2021,
 
-category
+    description: "Книга знайомить з основами JavaScript та пояснює ключові поняття простою мовою."
 
-Приватну властивість:
+  },
 
-#id — унікальний номер товару.
+  {
 
-Статичні елементи:
+    id: 2,
 
-Product.counter = 0
+    title: "Сучасний JavaScript",
 
-Product.generateId() — повертає новий унікальний ID і збільшує лічильник.
+    author: "Олена Коваль",
 
-У конструкторі присвоюйте приватний #id = Product.generateId().
+    year: 2020,
 
-Додайте:
+    description: "Посібник з сучасних можливостей JavaScript та прикладів їх використання."
 
-✔ Геттер:
+  },
 
-info → повертає рядок формату:
+  {
 
-"Laptop | Electronics | 1200$"
+    id: 3,
 
-✔ Сетер:
+    title: "Веб-розробка з нуля",
 
-price
+    author: "Андрій Мельник",
 
-— приймає нову ціну
+    year: 2019,
 
-— якщо ціна < 0 → показує попередження та не змінює значення */
+    description: "Книга про створення веб-застосунків з використанням HTML, CSS та JavaScript."
 
-
-class Product {
-  static counter = 0;
-
-  static generateId() {
-    return ++Product.counter;
   }
 
-  #id;
+];
+ 
 
-  constructor(name, price, category) {
-    this.name = name;
-    this._price = price;
-    this.category = category;
-    this.#id = Product.generateId();
-  }
+/* Завдання */
+/* Отримайте доступ до елемента з id="root" за допомогою JavaScript. */
 
-  get id() {
-    return this.#id;
-  }
+const root = document.getElementById("root");
 
-  get info() {
-    return `${this.name} | ${this.category} | ${this._price}$`;
-  }
+/* Динамічно створіть заголовок сторінки (наприклад, «Список книг») і додайте його в root. */
 
-  get price() {
-    return this._price;
-  }
+const title = document.createElement("h1");
+title.textContent = "Список книг";
+root.appendChild(title);
 
-  set price(newPrice) {
-    if (newPrice < 0) {
-      console.warn("Price cannot be negative!");
-      return;
-    }
-    this._price = newPrice;
-  }
+/* Реалізуйте макет сторінки, поділений на дві частини:
+
+ліва частина — список книг;
+
+права частина — блок для відображення детальної інформації. */
+
+const layout = document.createElement("div");
+
+layout.style.display = "flex";
+
+layout.style.gap = "40px";
+
+root.appendChild(layout);
+
+/* У лівій частині сторінки:
+
+згенеруйте список книг на основі масиву books;
+
+для кожної книги відобразіть її назву;
+
+поруч з назвою кожної книги додайте кнопку «View Details». */
+
+const listSection = document.createElement("div");
+
+listSection.style.width = "40%";
+
+/* При натисканні на кнопку «View Details»:
+
+у правій частині сторінки має відображатися детальна інформація про відповідну книгу;
+
+детальна інформація повинна містити:
+
+назву книги;
+
+автора;
+
+рік видання;
+
+опис.
+
+При натисканні на іншу кнопку «View Details» інформація в правій частині повинна оновлюватися відповідно до обраної книги.*/
+
+const detailsSection = document.createElement("div");
+
+detailsSection.style.width = "60%";
+
+detailsSection.style.border = "1px solid #ccc";
+
+detailsSection.style.padding = "15px";
+
+layout.appendChild(listSection);
+
+layout.appendChild(detailsSection);
+
+// функція показу деталей
+
+function showDetails(book) {
+  detailsSection.innerHTML = "";
+
+  const bookTitle = document.createElement("h2");
+
+  bookTitle.textContent = book.title;
+
+  const author = document.createElement("p");
+
+  author.textContent = "Author: " + book.author;
+
+  const year = document.createElement("p");
+
+  year.textContent = "Year: " + book.year;
+
+  const description = document.createElement("p");
+
+  description.textContent = book.description;
+
+  detailsSection.appendChild(bookTitle);
+
+  detailsSection.appendChild(author);
+
+  detailsSection.appendChild(year);
+
+  detailsSection.appendChild(description);
+
 }
 
-/* Частина 2 — Клас Order
+// список книг
 
-Створіть клас Order, який має:
+books.forEach(book => {
 
-Приватні властивості:
+  const item = document.createElement("div");
 
-#orderId
+  item.style.marginBottom = "10px";
 
-#products (масив товарів)
+  const bookName = document.createElement("span");
 
-Публічні методи:
+  bookName.textContent = book.title;
 
-addProduct(product) — додає товар у масив
+  const button = document.createElement("button");
 
-getTotalPrice() — повертає сумарну ціну товарів
+  button.textContent = "View Details";
 
-getProductCount() — повертає кількість товарів у замовленні
+  button.style.marginLeft = "10px";
 
-Геттер:
+  button.addEventListener("click", () => {
 
-summary
+    showDetails(book);
 
-повертає рядок:
+  });
 
-"Order #3: 5 items, total 2500$"
+  item.appendChild(bookName);
 
-Приватний метод:
+  item.appendChild(button);
 
-#logOrder() — просто виводить "Order created: <id>"
+  listSection.appendChild(item);
 
-✔ Викликайте приватний метод у конструкторі, щоб він спрацьовував при створенні замовлення. */
-
-class Order {
-  static counter = 0;
-
-  #orderId;
-  #products = [];
-
-  constructor() {
-    this.#orderId = ++Order.counter;
-    this.#logOrder();
-  }
-
-  #logOrder() {
-    console.log(`Order created: ${this.#orderId}`);
-  }
-
-  addProduct(product) {
-    this.#products.push(product);
-  }
-
-  getTotalPrice() {
-    return this.#products.reduce((sum, p) => sum + p.price, 0);
-  }
-
-  getProductCount() {
-    return this.#products.length;
-  }
-
-  get summary() {
-    return `Order #${this.#orderId}: ${this.getProductCount()} items, total ${this.getTotalPrice()}$`;
-  }
-}
-
-/* Частина 3 — Наслідування: PremiumOrder
-
-Створіть клас PremiumOrder, який наслідується від Order.
-
-Додайте:
-
-Публічну властивість:
-
-discount — знижка у відсотках
-
-Перевизначений метод:
-
-getTotalPrice()
-
-→ повинно рахувати суму з урахуванням знижки:
-
-total = baseTotal - (baseTotal * discount / 100) */
-
-class PremiumOrder extends Order {
-  constructor(discount) {
-    super();
-    this.discount = discount;
-  }
-
-  getTotalPrice() {
-    const baseTotal = super.getTotalPrice();
-    return baseTotal - (baseTotal * this.discount / 100);
-  }
-}
-
-/* Частина 4 — Клас User
-
-Створіть клас User, який має:
-
-Публічні властивості:
-
-name
-
-email
-
-Приватну властивість:
-
-#orders — масив замовлень
-
-Публічні методи:
-
-addOrder(order) — додає замовлення
-
-getOrderCount() — кількість замовлень
-
-listOrders() — повертає масив summary кожного замовлення
-
-Геттер:
-
-lastOrder
-
-→ повертає останнє замовлення (або null, якщо їх немає) */
-
-class User {
-  #orders = [];
-
-  constructor(name, email) {
-    this.name = name;
-    this.email = email;
-  }
-
-  addOrder(order) {
-    this.#orders.push(order);
-  }
-
-  getOrderCount() {
-    return this.#orders.length;
-  }
-
-  listOrders() {
-    return this.#orders.map(order => order.summary);
-  }
-
-  get lastOrder() {
-    return this.#orders.length
-      ? this.#orders[this.#orders.length - 1]
-      : null;
-  }
-}
-
-/* ✨ Частина 5 — Тестування (обов’язкове)
-
-Створіть:
-
-кілька товарів (Product)
-
-звичайне замовлення (Order)
-
-преміум замовлення (PremiumOrder)
-
-користувача (User)
-
-Перевірте:
-
-✔ додавання товарів у замовлення
-
-✔ роботу геттера summary
-
-✔ працездатність сетера price
-
-✔ виклик приватного методу #logOrder() у Order
-
-✔ роботу наслідування у PremiumOrder
-
-✔ додавання замовлень користувачеві
-
-✔ геттер lastOrder
-
-✔ збільшення ID через статичний лічильник Product.counter */
-
-const laptop = new Product("Laptop", 1200, "Electronics");
-const phone = new Product("Phone", 800, "Electronics");
-const book = new Product("Book", 50, "Education");
-
-console.log(laptop.info);
-console.log(phone.info);
-console.log("Product counter:", Product.counter);
-
-book.price = -100;
-book.price = 60;
-console.log(book.info);
-
-// Звичайне замовлення
-const order1 = new Order();
-order1.addProduct(laptop);
-order1.addProduct(book);
-
-console.log(order1.summary);
-
-// Преміум замовлення
-const premiumOrder = new PremiumOrder(10);
-premiumOrder.addProduct(phone);
-premiumOrder.addProduct(laptop);
-
-console.log(premiumOrder.summary);
-
-// Користувач
-const user = new User("Ivan", "ivan@gmail.com");
-
-user.addOrder(order1);
-user.addOrder(premiumOrder);
-
-console.log("Order count:", user.getOrderCount());
-console.log("All orders:", user.listOrders());
-console.log("Last order:", user.lastOrder.summary);
+});
