@@ -3,11 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Homework 30</title>
+    <title>Homework 31</title>
   </head>
   <body>
-    <div id="root"></div>
-
+    <h1>Список книг</h1>
+    <div id="layout" style="display: flex; gap: 40px">
+      <div
+        id="detailsSection"
+        style="width: 60%; border: 1px solid #ccc; padding: 15px"
+      ></div>
+    </div>
+    <div
+      id="notification"
+      style="
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background: lightgreen;
+        border-radius: 5px;
+        display: none;
+      "
+    ></div>
+    <ul class="list"></ul>
+    <button type="button" class="add">Add book</button>
+    <div class="form-wrapper"></div>
     <script src="./main.js"></script>
   </body>
 </html>
