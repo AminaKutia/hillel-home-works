@@ -1,4 +1,3 @@
-// Початкові книги (seed)
 const initialBooks = [
   {
     id: 1,
@@ -26,217 +25,119 @@ const initialBooks = [
   },
 ];
 
-// Ініціалізація localStorage при першому запуску
+// Ініціалізація Local Storage
 if (!localStorage.getItem("books")) {
   localStorage.setItem("books", JSON.stringify(initialBooks));
 }
 
-function getBooks() {
-  return JSON.parse(localStorage.getItem("books")) || [];
-}
-
-function setBooks(books) {
-  localStorage.setItem("books", JSON.stringify(books));
-}
-
-function getNextId() {
-  const books = getBooks();
-  return books.length ? Math.max(...books.map((b) => b.id)) + 1 : 1;
-}
+let nextId = JSON.parse(localStorage.getItem("books")).length + 1;
 
 const root = document.getElementById("root");
 
-// Заголовок
+// Заголовок + контейнер
+root.insertAdjacentHTML(
+  "beforeend",
+  `
+  <h1>Список книг</h1>
+  <div id="layout" style="display:flex; gap:40px;">
+    <div id="listSection" style="width:40%"></div>
+    <div id="detailsSection" style="width:60%; border:1px solid #ccc; padding:15px"></div>
+  </div>
+  <div id="notification" style="position:fixed; top:20px; right:20px; padding:10px 20px; background:lightgreen; border-radius:5px; display:none;"></div>
+`,
+);
 
-const title = document.createElement("h1");
-title.textContent = "Список книг";
-root.appendChild(title);
+const listSection = document.getElementById("listSection");
+const detailsSection = document.getElementById("detailsSection");
+const notification = document.getElementById("notification");
 
-// Контейнер сторінки
-
-const layout = document.createElement("div");
-layout.style.display = "flex";
-layout.style.gap = "40px";
-root.appendChild(layout);
-
-// Ліва частина — список книг
-
-const listSection = document.createElement("div");
-listSection.style.width = "40%";
-layout.appendChild(listSection);
-
-// Права частина — деталі / форма
-
-const detailsSection = document.createElement("div");
-detailsSection.style.width = "60%";
-detailsSection.style.border = "1px solid #ccc";
-detailsSection.style.padding = "15px";
-
-layout.appendChild(detailsSection);
-
-// Показ деталей книги
+// Показ детальної інформації
 function showDetails(book) {
-  detailsSection.innerHTML = "";
-
-  const bookTitle = document.createElement("h2");
-  bookTitle.textContent = book.title;
-
-  const author = document.createElement("p");
-  author.textContent = "Author: " + book.author;
-
-  const year = document.createElement("p");
-  year.textContent = "Year: " + book.year;
-
-  const description = document.createElement("p");
-  description.textContent = book.description;
-
-  detailsSection.appendChild(bookTitle);
-  detailsSection.appendChild(author);
-  detailsSection.appendChild(year);
-  detailsSection.appendChild(description);
+  detailsSection.innerHTML = `
+    <h2>${book.title}</h2>
+    <p>Author: ${book.author}</p>
+    <p>Year: ${book.year}</p>
+    <p>${book.description}</p>
+  `;
 }
 
-// Нотифікація
-function showNotification(message) {
-  const notif = document.createElement("div");
-  notif.textContent = message;
-  notif.style.position = "fixed";
-  notif.style.top = "20px";
-  notif.style.right = "20px";
-  notif.style.background = "#4caf50";
-  notif.style.color = "#fff";
-  notif.style.padding = "10px 15px";
-  notif.style.borderRadius = "5px";
-  notif.style.boxShadow = "0 2px 5px rgba(0,0,0,0.2)";
-  notif.style.opacity = "0";
-  notif.style.transition = "opacity 0.3s";
+// Показ списку книг
+function renderBookList() {
+  const books = JSON.parse(localStorage.getItem("books"));
+  listSection.innerHTML =
+    books
+      .map(
+        (book) => `
+    <div style="margin-bottom:10px;">
+      <span>${book.title}</span>
+      <button style="margin-left:10px;" onclick="showDetailsById(${book.id})">View Details</button>
+      <button style="margin-left:5px; color:red;" onclick="deleteBook(${book.id})">Delete</button>
+    </div>
+  `,
+      )
+      .join("") +
+    `
+    <button style="margin-top:20px;" onclick="showAddBookForm()">Add Book</button>
+  `;
+}
 
-  document.body.appendChild(notif);
-
-  // Поява через 1 секунду
-  setTimeout(() => {
-    notif.style.opacity = "1";
-  }, 1000);
-
-  // Зникнення через 3 секунди
-  setTimeout(() => {
-    notif.style.opacity = "0";
-    setTimeout(() => {
-      notif.remove();
-    }, 300);
-  }, 4000);
+// Показ деталей по id
+function showDetailsById(id) {
+  const books = JSON.parse(localStorage.getItem("books"));
+  const book = books.find((b) => b.id === id);
+  if (book) showDetails(book);
 }
 
 // Форма додавання книги
 function showAddBookForm() {
-  detailsSection.innerHTML = "";
+  detailsSection.innerHTML = `
+    <form id="addBookForm">
+      <label>Title:<input type="text" name="title" required style="width:100%; margin-bottom:10px;"></label>
+      <label>Author:<input type="text" name="author" required style="width:100%; margin-bottom:10px;"></label>
+      <label>Year:<input type="number" name="year" required style="width:100%; margin-bottom:10px;"></label>
+      <label>Description:<textarea name="description" rows="3" required style="width:100%; margin-bottom:10px;"></textarea></label>
+      <button type="submit">Submit</button>
+    </form>
+  `;
 
-  const form = document.createElement("form");
-
-  const fields = [
-    { label: "Title", name: "title" },
-    { label: "Author", name: "author" },
-    { label: "Year", name: "year" },
-    { label: "Description", name: "description" },
-  ];
-
-  fields.forEach((f) => {
-    const fieldLabel = document.createElement("label");
-    fieldLabel.textContent = f.label + ": ";
-    fieldLabel.style.display = "block";
-
-    let input;
-    if (f.name === "description") {
-      input = document.createElement("textarea");
-      input.rows = 3;
-    } else {
-      input = document.createElement("input");
-      if (f.name === "year") input.type = "number";
-    }
-    input.name = f.name;
-    input.required = true;
-    input.style.width = "100%";
-    input.style.marginBottom = "10px";
-
-    fieldLabel.appendChild(input);
-    form.appendChild(fieldLabel);
-  });
-
-  const submit = document.createElement("button");
-  submit.textContent = "Submit";
-  submit.type = "submit";
-  form.appendChild(submit);
-
+  const form = document.getElementById("addBookForm");
   form.addEventListener("submit", (e) => {
     e.preventDefault();
-
     const formData = new FormData(form);
+    const books = JSON.parse(localStorage.getItem("books"));
     const newBook = {
-      id: getNextId(),
+      id: nextId++,
       title: formData.get("title"),
       author: formData.get("author"),
       year: Number(formData.get("year")),
       description: formData.get("description"),
     };
-
-    const books = getBooks();
     books.push(newBook);
-    setBooks(books);
-
+    localStorage.setItem("books", JSON.stringify(books));
     renderBookList();
-
     detailsSection.innerHTML = `<p>Book "${newBook.title}" added successfully!</p>`;
   });
-
-  detailsSection.appendChild(form);
 }
 
 // Видалення книги
 function deleteBook(id) {
-  let books = getBooks();
-  books = books.filter((b) => b.id !== id);
-  setBooks(books);
-  renderBookList();
-  showNotification("Book deleted successfully!");
+  setTimeout(() => {
+    let books = JSON.parse(localStorage.getItem("books"));
+    const removedBook = books.find((b) => b.id === id);
+    books = books.filter((b) => b.id !== id);
+    localStorage.setItem("books", JSON.stringify(books));
+    renderBookList();
+    showNotification(`Book "${removedBook.title}" deleted successfully!`);
+  }, 1000);
 }
 
-// список книг
-function renderBookList() {
-  listSection.innerHTML = "";
-
-  const books = getBooks();
-
-  books.forEach((book) => {
-    const item = document.createElement("div");
-    item.style.marginBottom = "10px";
-
-    const bookName = document.createElement("span");
-    bookName.textContent = book.title;
-
-    const viewButton = document.createElement("button");
-    viewButton.textContent = "View Details";
-    viewButton.style.marginLeft = "10px";
-    viewButton.addEventListener("click", () => showDetails(book));
-
-    const deleteButton = document.createElement("button");
-    deleteButton.textContent = "Delete";
-    deleteButton.style.marginLeft = "5px";
-    deleteButton.addEventListener("click", () => deleteBook(book.id));
-
-    item.appendChild(bookName);
-    item.appendChild(viewButton);
-    item.appendChild(deleteButton);
-
-    listSection.appendChild(item);
-  });
-
-  // Кнопка Add Book
-  const addButton = document.createElement("button");
-  addButton.textContent = "Add Book";
-  addButton.style.marginTop = "20px";
-  addButton.addEventListener("click", showAddBookForm);
-
-  listSection.appendChild(addButton);
+// Показ нотифікації
+function showNotification(message) {
+  notification.textContent = message;
+  notification.style.display = "block";
+  setTimeout(() => {
+    notification.style.display = "none";
+  }, 3000);
 }
 
 renderBookList();
