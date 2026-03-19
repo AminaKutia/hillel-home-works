@@ -64,21 +64,19 @@ function showDetails(book) {
 // Показ списку книг
 function renderBookList() {
   const books = JSON.parse(localStorage.getItem("books"));
+
   listSection.innerHTML =
     books
       .map(
-        (book) => `
-    <div style="margin-bottom:10px;">
-      <span>${book.title}</span>
-      <button style="margin-left:10px;" onclick="showDetailsById(${book.id})">View Details</button>
-      <button style="margin-left:5px; color:red;" onclick="deleteBook(${book.id})">Delete</button>
-    </div>
-  `,
+        (book) =>
+          `<div style="margin-bottom:10px;">
+          <span>${book.title}</span>
+         <button data-id="${book.id}" class="view-btn">View Details</button>
+          <button data-id="${book.id}" class="delete-btn" style="color:red;">Delete</button>
+          </div>`,
       )
       .join("") +
-    `
-    <button style="margin-top:20px;" onclick="showAddBookForm()">Add Book</button>
-  `;
+    `<button id="addBookBtn" style="margin-top:20px;">Add Book</button>`;
 }
 
 // Показ деталей по id
@@ -87,6 +85,25 @@ function showDetailsById(id) {
   const book = books.find((b) => b.id === id);
   if (book) showDetails(book);
 }
+
+listSection.addEventListener("click", (e) => {
+  const id = Number(e.target.dataset.id);
+
+  // View Details
+  if (e.target.classList.contains("view-btn")) {
+    showDetailsById(id);
+  }
+
+  // Delete
+  if (e.target.classList.contains("delete-btn")) {
+    deleteBook(id);
+  }
+
+  // Add Book
+  if (e.target.id === "addBookBtn") {
+    showAddBookForm();
+  }
+});
 
 // Форма додавання книги
 function showAddBookForm() {
