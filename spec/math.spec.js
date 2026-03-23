@@ -1,7 +1,6 @@
 const { sum, divide, isEven, average } = require("../src/math.js");
 
 describe("тестування коду з допомогою Jasmine.  Модуль 1", () => {
-
   let numbers;
   beforeEach(() => {
     numbers = [2, 4, 6];
@@ -21,7 +20,7 @@ describe("тестування коду з допомогою Jasmine.  Моду
   });
 
   it("викидання помилки при діленні на 0", () => {
-    expect(() => divide(2, 0).toThrow());
+    expect(() => divide(2, 0)).toThrow();
   });
 
   it("повертає true для парних чисел", () => {
