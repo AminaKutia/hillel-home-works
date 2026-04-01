@@ -26,11 +26,12 @@ const initialBooks = [
 ];
 
 // Ініціалізація Local Storage
-if (!localStorage.getItem("books")) {
-  localStorage.setItem("books", JSON.stringify(initialBooks));
+if (getBooks().length === 0) {
+  saveBooks(initialBooks);
 }
 
-let nextId = JSON.parse(localStorage.getItem("books")).length + 1;
+const books = getBooks();
+const nextId = books.length ? Math.max(...books.map((b) => b.id)) + 1 : 1;
 
 const root = document.getElementById("root");
 
@@ -63,7 +64,7 @@ function showDetails(book) {
 
 // Показ списку книг
 function renderBookList() {
-  const books = JSON.parse(localStorage.getItem("books"));
+  const books = getBooks();
 
   listSection.innerHTML =
     books
@@ -81,7 +82,7 @@ function renderBookList() {
 
 // Показ деталей по id
 function showDetailsById(id) {
-  const books = JSON.parse(localStorage.getItem("books"));
+  const books = getBooks();
   const book = books.find((b) => b.id === id);
   if (book) showDetails(book);
 }
@@ -121,7 +122,7 @@ function showAddBookForm() {
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     const formData = new FormData(form);
-    const books = JSON.parse(localStorage.getItem("books"));
+    const books = getBooks();
     const newBook = {
       id: nextId++,
       title: formData.get("title"),
@@ -130,7 +131,7 @@ function showAddBookForm() {
       description: formData.get("description"),
     };
     books.push(newBook);
-    localStorage.setItem("books", JSON.stringify(books));
+    saveBooks(JSON.stringify(books));
     renderBookList();
     detailsSection.innerHTML = `<p>Book "${newBook.title}" added successfully!</p>`;
   });
@@ -139,12 +140,16 @@ function showAddBookForm() {
 // Видалення книги
 function deleteBook(id) {
   setTimeout(() => {
-    let books = JSON.parse(localStorage.getItem("books"));
+    let books = getBooks();
     const removedBook = books.find((b) => b.id === id);
     books = books.filter((b) => b.id !== id);
-    localStorage.setItem("books", JSON.stringify(books));
+    saveBooks(JSON.stringify(books));
     renderBookList();
-    showNotification(`Book "${removedBook.title}" deleted successfully!`);
+    if (removedBook) {
+      showNotification(`Book "${removedBook.title}" deleted successfully!`);
+    } else {
+      showNotification("Book deleted successfully!");
+    }
   }, 1000);
 }
 
@@ -155,6 +160,14 @@ function showNotification(message) {
   setTimeout(() => {
     notification.style.display = "none";
   }, 3000);
+}
+
+function getBooks() {
+  return JSON.parse(localStorage.getItem("books")) || [];
+}
+
+function saveBooks(books) {
+  localStorage.setItem("books", JSON.stringify(books));
 }
 
 renderBookList();
