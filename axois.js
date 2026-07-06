@@ -1,3 +1,7 @@
+const api = axios.create({
+  baseURL: "https://6971cf4a32c6bacb12c49096.mockapi.io/",
+});
+
 const BASE_URL = "https://6971cf4a32c6bacb12c49096.mockapi.io/";
 const list = document.querySelector(".list");
 const addBtn = document.querySelector(".add");
@@ -6,66 +10,67 @@ const detailsSection = document.getElementById("detailsSection");
 const notification = document.getElementById("notification");
 
 // Показ списку книг
-function renderBookList() {
-  fetch(`${BASE_URL}/books`)
-    .then((response) => response.json())
-    .then((data) => {
-      const markup = data
-        .map(
-          ({ author, title, year, description, id }) =>
-            `<li id=${id}><p>Title: <span class='title'>${title}</span></p><p>Author: <span class='author'>${author}</span></p><p>Year: <span class='year'>${year}</span></p><p>Description: <span class='description'>${description}</span></p><button class='view-btn'>View details</button><button class='delete'>Delete</button><button class='edit'>Edit</button><div class ='edit-form-wrapper'></div></li>`,
-        )
-        .join("");
-      list.innerHTML = markup;
-      const viewBtns = list.querySelectorAll(".view-btn");
-      viewBtns.forEach((btn) => btn.addEventListener("click", viewBook));
-      const deleteBtns = list.querySelectorAll(".delete");
-      deleteBtns.forEach((btn) => btn.addEventListener("click", deleteBook));
-      const editBtns = list.querySelectorAll(".edit");
-      editBtns.forEach((btn) => btn.addEventListener("click", editBook));
-    });
+async function renderBookList() {
+  try {
+    const { data } = await api(`${BASE_URL}/books`);
+    const markup = data
+      .map(
+        ({ author, title, year, description, id }) =>
+          `<li id=${id}><p>Title: <span class='title'>${title}</span></p><p>Author: <span class='author'>${author}</span></p><p>Year: <span class='year'>${year}</span></p><p>Description: <span class='description'>${description}</span></p><button class='view-btn'>View details</button><button class='delete'>Delete</button><button class='edit'>Edit</button><div class ='edit-form-wrapper'></div></li>`,
+      )
+      .join("");
+    list.innerHTML = markup;
+    const viewBtns = list.querySelectorAll(".view-btn");
+    viewBtns.forEach((btn) => btn.addEventListener("click", viewBook));
+    const deleteBtns = list.querySelectorAll(".delete");
+    deleteBtns.forEach((btn) => btn.addEventListener("click", deleteBook));
+    const editBtns = list.querySelectorAll(".edit");
+    editBtns.forEach((btn) => btn.addEventListener("click", editBook));
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Показ деталей
-function viewBook(e) {
-  const id = e.target.parentNode.id;
-  fetch(`${BASE_URL}/books/${id}`)
-    .then((data) => data.json())
-    .then((book) => {
-      detailsSection.innerHTML = `
+async function viewBook(e) {
+  try {
+    const id = e.target.parentNode.id;
+    const { book } = await api(`${BASE_URL}/books/${id}`);
+    detailsSection.innerHTML = `
     <h2>${book.title}</h2>
     <p>Author: ${book.author}</p>
     <p>Year: ${book.year}</p>
     <p>${book.description}</p>
   `;
-    })
-    .catch((error) => console.log(error));
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 // Видалення книги
-function deleteBook(e) {
-  const id = e.target.parentNode.id;
-  e.target.textContent = "Deleting";
-  setTimeout(() => {
-    const options = {
+async function deleteBook(e) {
+  try {
+    const id = e.target.parentNode.id;
+    e.target.textContent = "Deleting";
+    /* const options = {
       method: "DELETE",
-    };
-    fetch(`${BASE_URL}/books/${id}`, options)
-      .then(() => {
-        renderBookList();
-        showNotification(`Book deleted successfully!`);
-      })
-      .catch((error) => console.log(error));
-  }, 1000);
+    }; */
+    /* await fetch(`${BASE_URL}/books/${id}`, options); */
+    await api.delete(`${BASE_URL}/books/${id}`);
+    renderBookList();
+    showNotification(`Book deleted successfully!`);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 addBtn.addEventListener("click", addBook);
 
 function addBook() {
-  formWrapper.innerHTML = showAddBookForm(title, author, year, description);
+  formWrapper.innerHTML = showAddBookForm();
   const form = document.querySelector(".form");
   const savBtn = document.querySelector(".save");
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const bookData = {
       title: e.target.elements.title.value,
@@ -73,24 +78,15 @@ function addBook() {
       year: e.target.elements.year.value,
       description: e.target.elements.description.value,
     };
-    setTimeout(() => {
-      const options = {
-        method: "POST",
-        body: JSON.stringify(bookData),
-        headers: {
-          "Content-Type": "application/json; charset = UTF-8",
-        },
-      };
-
+    try {
       savBtn.textContent = "Saving...";
-      fetch(`${BASE_URL}/books`, options)
-        .then(() => {
-          formWrapper.innerHTML = "";
-          renderBookList();
-          showNotification(`Book added successfully!`);
-        })
-        .catch((error) => console.log(error));
-    }, 1000);
+      await api.post(`${BASE_URL}/books`, bookData);
+      formWrapper.innerHTML = "";
+      renderBookList();
+      showNotification(`Book added successfully!`);
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 
@@ -127,7 +123,7 @@ function editBook(e) {
   editFormWrapper.innerHTML = showAddBookForm(title, author, year, description);
   const form = li.querySelector(".form");
   const editBtn = e.target;
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
     const bookData = {
       title: e.target.elements.title.value,
@@ -135,20 +131,14 @@ function editBook(e) {
       year: e.target.elements.year.value,
       description: e.target.elements.description.value,
     };
-    const options = {
-      method: "PUT",
-      body: JSON.stringify(bookData),
-      headers: {
-        "Content-Type": "application/json; charset = UTF-8",
-      },
-    };
-    editBtn.textContent = "Editing";
-    fetch(`${BASE_URL}/books/${id}`, options)
-      .then(() => {
-        renderBookList();
-        showNotification(`Book edited successfully!`);
-      })
-      .catch((error) => console.log(error));
+    try {
+      editBtn.textContent = "Editing";
+      await api.put(`${BASE_URL}/books/${id}`, bookData);
+      renderBookList();
+      showNotification(`Book edited successfully!`);
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 
