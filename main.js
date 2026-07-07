@@ -4,6 +4,7 @@ const addBtn = document.querySelector(".add");
 const formWrapper = document.querySelector(".form-wrapper");
 const detailsSection = document.getElementById("detailsSection");
 const notification = document.getElementById("notification");
+let selectedBookId = null;
 
 // Показ списку книг
 function renderBookList() {
@@ -29,6 +30,7 @@ function renderBookList() {
 // Показ деталей
 function viewBook(e) {
   const id = e.target.parentNode.id;
+  selectedBookId = id;
   fetch(`${BASE_URL}/books/${id}`)
     .then((data) => data.json())
     .then((book) => {
@@ -52,6 +54,10 @@ function deleteBook(e) {
     };
     fetch(`${BASE_URL}/books/${id}`, options)
       .then(() => {
+        if (selectedBookId === id) {
+          detailsSection.innerHTML = "";
+          selectedBookId = null;
+        }
         renderBookList();
         showNotification(`Book deleted successfully!`);
       })

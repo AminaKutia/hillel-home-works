@@ -1,5 +1,5 @@
 const api = axios.create({
-  baseURL: "https://6971cf4a32c6bacb12c49096.mockapi.io/",
+  baseURL: "https://6971cf4a32c6bacb12c49096.mockapi.io",
 });
 
 const BASE_URL = "https://6971cf4a32c6bacb12c49096.mockapi.io/";
@@ -8,6 +8,7 @@ const addBtn = document.querySelector(".add");
 const formWrapper = document.querySelector(".form-wrapper");
 const detailsSection = document.getElementById("detailsSection");
 const notification = document.getElementById("notification");
+let selectedBookId = null;
 
 // Показ списку книг
 async function renderBookList() {
@@ -35,12 +36,13 @@ async function renderBookList() {
 async function viewBook(e) {
   try {
     const id = e.target.parentNode.id;
-    const { book } = await api(`${BASE_URL}/books/${id}`);
+    selectedBookId = id;
+    const { data } = await api.get(`${BASE_URL}/books/${id}`);
     detailsSection.innerHTML = `
-    <h2>${book.title}</h2>
-    <p>Author: ${book.author}</p>
-    <p>Year: ${book.year}</p>
-    <p>${book.description}</p>
+    <h2>${data.title}</h2>
+    <p>Author: ${data.author}</p>
+    <p>Year: ${data.year}</p>
+    <p>${data.description}</p>
   `;
   } catch (error) {
     console.log(error);
@@ -52,11 +54,11 @@ async function deleteBook(e) {
   try {
     const id = e.target.parentNode.id;
     e.target.textContent = "Deleting";
-    /* const options = {
-      method: "DELETE",
-    }; */
-    /* await fetch(`${BASE_URL}/books/${id}`, options); */
     await api.delete(`${BASE_URL}/books/${id}`);
+    if (selectedBookId === id) {
+      detailsSection.innerHTML = "";
+      selectedBookId = null;
+    }
     renderBookList();
     showNotification(`Book deleted successfully!`);
   } catch (error) {
