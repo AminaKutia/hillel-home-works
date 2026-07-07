@@ -2,25 +2,38 @@ const api = axios.create({
   baseURL: "https://6971cf4a32c6bacb12c49096.mockapi.io",
 });
 
-const BASE_URL = "https://6971cf4a32c6bacb12c49096.mockapi.io/";
+const BASE_URL = "https://6971cf4a32c6bacb12c49096.mockapi.io";
 const list = document.querySelector(".list");
 const addBtn = document.querySelector(".add");
 const formWrapper = document.querySelector(".form-wrapper");
 const detailsSection = document.getElementById("detailsSection");
 const notification = document.getElementById("notification");
 let selectedBookId = null;
+const loadMoreBtn = document.querySelector(".load-more");
+let currentPage = 1;
 
 // Показ списку книг
 async function renderBookList() {
   try {
-    const { data } = await api(`${BASE_URL}/books`);
+    loadMoreBtn.style.display = "none";
+    const { data } = await api(`${BASE_URL}/books`, {
+      params: {
+        page: currentPage,
+        limit: 5,
+      },
+    });
     const markup = data
       .map(
         ({ author, title, year, description, id }) =>
           `<li id=${id}><p>Title: <span class='title'>${title}</span></p><p>Author: <span class='author'>${author}</span></p><p>Year: <span class='year'>${year}</span></p><p>Description: <span class='description'>${description}</span></p><button class='view-btn'>View details</button><button class='delete'>Delete</button><button class='edit'>Edit</button><div class ='edit-form-wrapper'></div></li>`,
       )
       .join("");
-    list.innerHTML = markup;
+    list.insertAdjacentHTML("beforeend", markup);
+    if (data.length === 5) {
+      loadMoreBtn.style.display = "inline";
+    } else {
+      alert("The end of collection");
+    }
     const viewBtns = list.querySelectorAll(".view-btn");
     viewBtns.forEach((btn) => btn.addEventListener("click", viewBook));
     const deleteBtns = list.querySelectorAll(".delete");
@@ -55,6 +68,8 @@ async function deleteBook(e) {
     const id = e.target.parentNode.id;
     e.target.textContent = "Deleting";
     await api.delete(`${BASE_URL}/books/${id}`);
+    currentPage = 1;
+    list.innerHTML = "";
     if (selectedBookId === id) {
       detailsSection.innerHTML = "";
       selectedBookId = null;
@@ -84,6 +99,8 @@ function addBook() {
       savBtn.textContent = "Saving...";
       await api.post(`${BASE_URL}/books`, bookData);
       formWrapper.innerHTML = "";
+      currentPage = 1;
+      list.innerHTML = "";
       renderBookList();
       showNotification(`Book added successfully!`);
     } catch (error) {
@@ -136,12 +153,21 @@ function editBook(e) {
     try {
       editBtn.textContent = "Editing";
       await api.put(`${BASE_URL}/books/${id}`, bookData);
+      currentPage = 1;
+      list.innerHTML = "";
       renderBookList();
       showNotification(`Book edited successfully!`);
     } catch (error) {
       console.log(error);
     }
   });
+}
+
+loadMoreBtn.addEventListener("click", handleLoadMore);
+
+function handleLoadMore() {
+  currentPage += 1;
+  renderBookList();
 }
 
 renderBookList();
