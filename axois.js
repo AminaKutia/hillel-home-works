@@ -11,6 +11,10 @@ const notification = document.getElementById("notification");
 let selectedBookId = null;
 const loadMoreBtn = document.querySelector(".load-more");
 let currentPage = 1;
+const searchForm = document.querySelector(".search-form");
+let search = "";
+const sortSelect = document.querySelector(".sort");
+let sortOrder = "asc";
 
 // Показ списку книг
 async function renderBookList() {
@@ -20,6 +24,9 @@ async function renderBookList() {
       params: {
         page: currentPage,
         limit: 5,
+        search,
+        sortBy: "title",
+        order: sortOrder,
       },
     });
     const markup = data
@@ -28,10 +35,13 @@ async function renderBookList() {
           `<li id=${id}><p>Title: <span class='title'>${title}</span></p><p>Author: <span class='author'>${author}</span></p><p>Year: <span class='year'>${year}</span></p><p>Description: <span class='description'>${description}</span></p><button class='view-btn'>View details</button><button class='delete'>Delete</button><button class='edit'>Edit</button><div class ='edit-form-wrapper'></div></li>`,
       )
       .join("");
+    if (currentPage === 1) {
+      list.innerHTML = "";
+    }
     list.insertAdjacentHTML("beforeend", markup);
     if (data.length === 5) {
       loadMoreBtn.style.display = "inline";
-    } else {
+    } else if (data.length < 5 && currentPage !== 1) {
       alert("The end of collection");
     }
     const viewBtns = list.querySelectorAll(".view-btn");
@@ -170,4 +180,24 @@ function handleLoadMore() {
   renderBookList();
 }
 
+searchForm.addEventListener("submit", searchHandler);
+
+function searchHandler(e) {
+  e.preventDefault();
+  const form = e.target;
+  search = form.elements.search.value.trim();
+  console.log(search);
+  currentPage = 1;
+  renderBookList();
+  form.reset();
+}
+
+sortSelect.addEventListener("change", changeSortOrder);
+
+function changeSortOrder(event) {
+  sortOrder = event.target.value;
+  list.innerHTML = "";
+  currentPage = 1;
+  renderBookList();
+}
 renderBookList();
